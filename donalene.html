@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laticínios Dona Lene</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Animações personalizadas que substituem as do React/Tailwind-animate */
+        .fade-in { animation: fadeIn 0.5s ease-in-out forwards; }
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+        .slide-in-bottom { animation: slideInBottom 0.3s ease-out forwards; }
+        .zoom-in { animation: zoomIn 0.2s ease-out forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        @keyframes slideInBottom { from { transform: translateY(2rem); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Utilitários para esconder/mostrar de forma suave */
+        .hidden-element { display: none !important; }
+    </style>
+</head>
+<body class="bg-stone-50 font-sans text-stone-800 flex flex-col min-h-screen">
+
+    <!-- Notificação (Toast) -->
+    <div id="toast" class="fixed top-20 right-4 z-50 transition-all duration-300 transform translate-x-10 opacity-0 pointer-events-none">
+        <div class="bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            <span class="font-medium">Produto adicionado!</span>
+        </div>
+    </div>
+
+    <!-- Cabeçalho -->
+    <header class="sticky top-0 z-40 w-full bg-white border-b border-stone-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="setActiveTab('home')">
+                    <img src="image_207a2b.jpg" alt="Logo Dona Lene" class="h-14 w-auto object-contain rounded-full shadow-sm" onerror="this.onerror=null; this.src='https://placehold.co/150x60/047857/white?text=Dona+Lene';" />
+                </div>
+
+                <!-- Navegação Desktop -->
+                <nav class="hidden md:flex items-center gap-8">
+                    <button onclick="setActiveTab('home')" class="nav-btn text-lg font-medium transition-colors border-b-2 py-1" data-target="home">Início</button>
+                    <button onclick="setActiveTab('products')" class="nav-btn text-lg font-medium transition-colors border-b-2 py-1" data-target="products">Produtos</button>
+                    <button onclick="setActiveTab('about')" class="nav-btn text-lg font-medium transition-colors border-b-2 py-1" data-target="about">Sobre Nós</button>
+                </nav>
+
+                <!-- Carrinho Icon -->
+                <button onclick="toggleCart(true)" class="relative p-2 text-stone-600 hover:text-emerald-700 transition-colors">
+                    <i data-lucide="shopping-cart" class="w-7 h-7"></i>
+                    <span id="cart-badge" class="hidden absolute top-0 right-0 bg-amber-500 text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navegação Mobile -->
+        <div class="md:hidden flex justify-center gap-4 border-t border-stone-100 py-3 bg-stone-50 shadow-inner">
+            <button onclick="setActiveTab('home')" class="nav-btn-mobile px-4 py-1.5 text-sm font-bold rounded-full transition-colors" data-target="home">Início</button>
+            <button onclick="setActiveTab('products')" class="nav-btn-mobile px-4 py-1.5 text-sm font-bold rounded-full transition-colors" data-target="products">Produtos</button>
+            <button onclick="setActiveTab('about')" class="nav-btn-mobile px-4 py-1.5 text-sm font-bold rounded-full transition-colors" data-target="about">Sobre Nós</button>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <div class="flex-grow flex flex-col">
+        
+        <!-- ABA: INÍCIO -->
+        <section id="tab-home" class="tab-content relative w-full flex-grow flex items-center justify-center min-h-[60vh] fade-in">
+            <div class="absolute inset-0 z-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=2000')">
+                <div class="absolute inset-0 bg-emerald-900/60"></div>
+            </div>
+            <div class="relative z-10 text-center px-4 max-w-3xl py-20">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-md">O sabor autêntico da fazenda para sua mesa</h1>
+                <p class="text-lg md:text-xl text-emerald-50 mb-8 font-light">A manteiga, queijo e requeijão artesanal. Produção própria com tradição e qualidade.</p>
+                <button onclick="setActiveTab('products')" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 font-bold py-3 px-8 rounded-full text-lg transition-transform hover:scale-105 shadow-lg">Ver Produtos</button>
+            </div>
+        </section>
+
+        <!-- ABA: PRODUTOS -->
+        <main id="tab-products" class="tab-content hidden-element max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-stone-800 mb-4 flex items-center justify-center gap-2">
+                    <i data-lucide="leaf" class="text-emerald-600 w-8 h-8"></i> 
+                    Nossos Produtos
+                    <i data-lucide="leaf" class="text-emerald-600 w-8 h-8"></i>
+                </h2>
+                <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
+            </div>
+            <!-- Grid de Produtos injetada por JS -->
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        </main>
+
+        <!-- ABA: SOBRE NÓS -->
+        <section id="tab-about" class="tab-content hidden-element bg-emerald-800 text-white flex-grow flex flex-col justify-center py-16 fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">A Tradição da Dona Lene</h2>
+                <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
+                <p class="mt-6 max-w-2xl mx-auto text-emerald-50 text-lg px-4 italic">Nascemos da paixão pela terra e pelo trabalho árduo no sertão. Nosso objetivo é levar até a sua mesa o verdadeiro sabor dos laticínios artesanais.</p>
+            </div>
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 text-center mt-8">
+                <div class="flex flex-col items-center p-6 bg-emerald-900/30 rounded-2xl">
+                    <i data-lucide="leaf" class="text-amber-400 mb-4 w-8 h-8"></i>
+                    <h3 class="font-bold text-xl mb-2">100% Natural</h3>
+                    <p class="text-emerald-100/80">Sem conservantes artificiais.</p>
+                </div>
+                <div class="flex flex-col items-center p-6 bg-emerald-900/30 rounded-2xl">
+                    <i data-lucide="map-pin" class="text-amber-400 mb-4 w-8 h-8"></i>
+                    <h3 class="font-bold text-xl mb-2">Da Nossa Região</h3>
+                    <p class="text-emerald-100/80">Sabor autêntico do Nordeste.</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-stone-900 text-stone-400 py-12 border-t-[6px] border-emerald-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-10">
+            <!-- Logo e Descrição -->
+            <div class="flex flex-col items-center md:items-start gap-4">
+                <img src="image_207a2b.jpg" alt="Dona Lene" class="h-16 w-auto object-contain rounded-full opacity-95 border-2 border-stone-700" onerror="this.onerror=null; this.src='https://placehold.co/120x120/1c1917/a8a29e?text=Dona+Lene';" />
+                <p class="text-sm text-center md:text-left mt-2 max-w-xs leading-relaxed">O verdadeiro sabor da fazenda direto para a sua mesa. Tradição e qualidade em cada pedaço.</p>
+            </div>
+            
+            <!-- Endereço e Contatos -->
+            <div class="flex flex-col items-center md:items-start gap-3 text-sm">
+                <h4 class="text-stone-200 font-bold mb-1 uppercase tracking-wider text-xs">Atendimento & Endereço</h4>
+                <div class="flex items-start gap-2">
+                    <i data-lucide="map-pin" class="text-emerald-600 shrink-0 mt-0.5 w-4 h-4"></i>
+                    <div><p>Rua China, 62 - Caseb</p><p>Feira de Santana - BA</p></div>
+                </div>
+                <a href="mailto:marilenelimaborges@gmail.com" class="flex items-center gap-2 hover:text-emerald-500 transition-colors mt-2">
+                    <i data-lucide="mail" class="text-emerald-600 shrink-0 w-4 h-4"></i>
+                    <span class="break-all">marilenelimaborges@gmail.com</span>
+                </a>
+                <a href="https://wa.me/5575988615063" target="_blank" rel="noreferrer" class="flex items-center gap-2 hover:text-emerald-500 transition-colors">
+                    <i data-lucide="phone" class="text-emerald-600 shrink-0 w-4 h-4"></i>
+                    <span>(75) 98861-5063</span>
+                </a>
+            </div>
+
+            <!-- Redes Sociais -->
+            <div class="flex flex-col items-center md:items-start gap-3 text-sm">
+                <h4 class="text-stone-200 font-bold mb-1 uppercase tracking-wider text-xs">Siga-nos</h4>
+                <div class="flex gap-4">
+                    <a href="#" class="bg-stone-800 p-2 rounded-full text-stone-300 hover:text-white hover:bg-emerald-600 transition-all shadow-sm">
+                        <i data-lucide="instagram" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-stone-800 text-sm text-center opacity-60">
+            <p>&copy; 2016 Dona Lene. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Modal Detalhes -->
+    <div id="modal-product" class="fixed inset-0 z-50 items-center justify-center p-4 hidden-element flex">
+        <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity" onclick="closeProductModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden zoom-in flex flex-col max-h-[90vh]">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 bg-white/70 hover:bg-white text-stone-800 rounded-full p-2 z-10 transition-colors shadow-sm">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="h-64 sm:h-72 w-full shrink-0 relative">
+                <img id="modal-img" src="" alt="" class="w-full h-full object-cover" />
+            </div>
+            <div class="p-6 sm:p-8 overflow-y-auto">
+                <span id="modal-category" class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3 inline-block"></span>
+                <h3 id="modal-title" class="text-2xl sm:text-3xl font-bold text-stone-800 mb-4 leading-tight"></h3>
+                <p id="modal-desc" class="text-stone-600 text-base sm:text-lg mb-6 leading-relaxed"></p>
+                
+                <div class="bg-emerald-50 rounded-xl p-4 mb-6 border border-emerald-100">
+                    <h4 class="text-xs font-bold text-emerald-800 mb-3 uppercase tracking-widest">Garantia Dona Lene</h4>
+                    <div class="flex flex-col gap-2.5">
+                        <div class="flex items-center gap-3 text-sm text-emerald-700">
+                            <i data-lucide="leaf" class="shrink-0 text-emerald-600 w-4 h-4"></i> 
+                            <span>100% Natural: Sem conservantes.</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-emerald-700">
+                            <i data-lucide="map-pin" class="shrink-0 text-emerald-600 w-4 h-4"></i> 
+                            <span>Feira de Santana: Sabor do Nordeste.</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between border-t border-stone-100 pt-6">
+                    <span id="modal-price" class="text-2xl sm:text-3xl font-black text-emerald-700"></span>
+                    <button id="modal-add-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all hover:scale-105 shadow-md active:scale-95">
+                        <i data-lucide="shopping-cart" class="w-5 h-5"></i> Adicionar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Carrinho -->
+    <div id="modal-cart" class="fixed inset-0 z-50 overflow-hidden hidden-element">
+        <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity" onclick="toggleCart(false)"></div>
+        <div class="absolute inset-y-0 right-0 max-w-md w-full flex">
+            <div class="w-full h-full bg-white shadow-2xl flex flex-col slide-in-right">
+                <div class="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-stone-50">
+                    <h2 class="text-xl font-bold text-stone-800 flex items-center gap-2">
+                        <i data-lucide="shopping-cart" class="text-emerald-600 w-6 h-6"></i> Meu Carrinho
+                    </h2>
+                    <button onclick="toggleCart(false)" class="p-2 text-stone-400 hover:text-red-500 transition-colors">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+
+                <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-6">
+                    <!-- Itens do carrinho injectados por JS -->
+                </div>
+
+                <div id="cart-footer" class="border-t border-stone-100 p-6 bg-stone-50 hidden-element">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-stone-500 text-xs font-bold uppercase tracking-wider">Subtotal</span>
+                        <span id="cart-total" class="text-2xl font-black text-stone-800">R$ 0,00</span>
+                    </div>
+                    <button onclick="handleCheckout()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95">
+                        <i data-lucide="phone" class="w-5 h-5"></i> Pedir pelo WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat IA -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="chat-window" class="hidden-element bg-white w-80 sm:w-96 rounded-2xl shadow-2xl border border-stone-200 mb-4 overflow-hidden flex flex-col h-[400px] slide-in-bottom">
+            <div class="bg-emerald-700 text-white p-4 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="bot" class="w-6 h-6"></i>
+                    <span class="font-bold">Assistente Dona Lene</span>
+                </div>
+                <button onclick="toggleChat(false)" class="text-emerald-100 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 bg-stone-50">
+                <!-- Mensagens de chat injectadas aqui -->
+            </div>
+            
+            <!-- Indicador de digitação -->
+            <div id="chat-typing" class="hidden-element px-4 pb-2 bg-stone-50">
+                <div class="flex justify-start">
+                    <div class="bg-white border border-stone-200 text-stone-500 p-2 px-3 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-1.5">
+                        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce"></div>
+                        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-3 bg-white border-t border-stone-200 flex gap-2">
+                <input type="text" id="chat-input" placeholder="Dúvidas sobre os produtos?" class="flex-1 px-3 py-2 bg-stone-100 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm" onkeypress="if(event.key === 'Enter') handleSendMessage()" />
+                <button id="chat-send-btn" onclick="handleSendMessage()" class="p-2 bg-amber-500 text-white rounded-xl hover:bg-amber-600 disabled:opacity-50 transition-colors shadow-sm">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+        
+        <button id="chat-toggle-btn" onclick="toggleChat()" class="bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-full shadow-xl transition-all hover:scale-110 active:scale-95 flex items-center justify-center border-4 border-white">
+            <i data-lucide="message-circle" class="w-7 h-7" id="chat-icon-default"></i>
+            <i data-lucide="x" class="w-7 h-7 hidden-element" id="chat-icon-close"></i>
+        </button>
+    </div>
+
+    <!-- Scripts JavaScript (Lógica da Aplicação) -->
+    <script>
+        // --- DADOS DOS PRODUTOS ---
+        const PRODUCTS = [
+            { id: 1, name: 'Manteiga da Terra Artesanal', price: 12.50, category: 'Laticínios', image: 'https://nutritotal.com.br/publico-geral/wp-content/uploads/2021/07/manteiga-ghee-beneficios-1.jpg', desc: 'Manteiga pura artesanal, sabor autêntico do sertão. Potes de 250g.' },
+            { id: 7, name: 'Manteiga da Terra Artesanal', price: 22.00, category: 'Laticínios', image: 'https://nutritotal.com.br/publico-geral/wp-content/uploads/2021/07/manteiga-ghee-beneficios-1.jpg', desc: 'Manteiga pura artesanal, sabor autêntico do sertão. Potes de 500g.' },
+            { id: 2, name: 'Queijo Coalho (500g)', price: 45.00, category: 'Laticínios', image: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/Queijo_coalho.jpg', desc: 'Tradicional e perfeito para o seu churrasco ou café.' },
+            { id: 3, name: 'Queijo da Fazenda', price: 40.00, category: 'Laticínios', image: 'https://img.irroba.com.br/fit-in/600x600/filters:fill(fff):quality(80)/queijinc/catalog/produtos-2024/ambrosia/73.jpg', desc: 'Em barra ou quilo. O verdadeiro sabor da fazenda.' },
+            { id: 4, name: 'Requeijão', price: 45.00, category: 'Laticínios', image: 'https://images.unsplash.com/photo-1559561853-08451507cbe7?auto=format&fit=crop&q=80&w=500', desc: 'Em barra ou quilo. O verdadeiro sabor da fazenda.' },
+            { id: 5, name: 'Pizza Artesanal Botrinho com kit. 10 un.', price: 75.00, category: 'Congelados', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=500', desc: 'Massa de longa fermentação com ingredientes selecionados.' },
+            { id: 6, name: 'Queijo', price: 42.00, category: 'Laticínios', image: 'queijo_mussarela_tregar_bloco_2_6kg_211_2_33ea857e7c72068955dc289fe39b3f4d.webp', desc: 'Em barra ou quilo. O verdadeiro sabor da fazenda.' }
+        ];
+
+        // --- ESTADOS GLOBAIS ---
+        let cart = [];
+        let activeTab = 'home';
+        let chatMessages = [{ role: 'model', content: 'Olá! Sou a assistente virtual da Dona Lene. Posso te ajudar a escolher os melhores laticínios hoje?' }];
+        let isChatOpen = false;
+        let isTyping = false;
+        let selectedProduct = null;
+
+        // --- UTILITÁRIOS ---
+        const formatPrice = (price) => {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
+        };
+
+        // Iniciar e Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderProducts();
+            setActiveTab('home');
+            renderChatMessages();
+        });
+
+        // --- NAVEGAÇÃO E ABAS ---
+        function setActiveTab(tabId) {
+            activeTab = tabId;
+            // Ocultar todas as abas e remover classes ativas
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden-element'));
+            document.querySelectorAll('.nav-btn, .nav-btn-mobile').forEach(btn => {
+                if(btn.classList.contains('nav-btn')) {
+                    btn.className = "nav-btn text-lg font-medium transition-colors border-b-2 py-1 text-stone-500 border-transparent hover:text-emerald-600";
+                } else {
+                    btn.className = "nav-btn-mobile px-4 py-1.5 text-sm font-bold rounded-full transition-colors bg-white text-stone-600 border border-stone-200";
+                }
+            });
+
+            // Mostrar a aba selecionada e aplicar estilos de ativo
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden-element');
+            
+            document.querySelectorAll(`[data-target="${tabId}"]`).forEach(btn => {
+                if(btn.classList.contains('nav-btn')) {
+                    btn.className = "nav-btn text-lg font-medium transition-colors border-b-2 py-1 text-emerald-700 border-emerald-700";
+                } else {
+                    btn.className = "nav-btn-mobile px-4 py-1.5 text-sm font-bold rounded-full transition-colors bg-emerald-600 text-white shadow-md";
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- LISTAGEM DE PRODUTOS E MODAL ---
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = PRODUCTS.map(product => `
+                <div onclick="openProductModal(${product.id})" class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden hover:shadow-xl transition-shadow duration-300 group cursor-pointer">
+                    <div class="h-64 overflow-hidden relative">
+                        <div class="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-emerald-700">
+                            ${product.category}
+                        </div>
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://placehold.co/400x300?text=Sem+Imagem';"/>
+                    </div>
+                    <div class="p-6 flex flex-col h-[calc(100%-16rem)]">
+                        <h3 class="text-xl font-bold text-stone-800 mb-2">${product.name}</h3>
+                        <p class="text-stone-500 text-sm mb-4 line-clamp-2">${product.desc}</p>
+                        <div class="flex items-center justify-between mt-auto">
+                            <span class="text-2xl font-black text-emerald-700">${formatPrice(product.price)}</span>
+                            <button onclick="event.stopPropagation(); addToCart(${product.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white p-3 rounded-full transition-colors flex items-center justify-center shadow-md hover:shadow-lg">
+                                <i data-lucide="plus" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function openProductModal(productId) {
+            selectedProduct = PRODUCTS.find(p => p.id === productId);
+            if (!selectedProduct) return;
+            
+            document.getElementById('modal-img').src = selectedProduct.image;
+            document.getElementById('modal-category').textContent = selectedProduct.category;
+            document.getElementById('modal-title').textContent = selectedProduct.name;
+            document.getElementById('modal-desc').textContent = selectedProduct.desc;
+            document.getElementById('modal-price').textContent = formatPrice(selectedProduct.price);
+            
+            document.getElementById('modal-add-btn').onclick = () => {
+                addToCart(selectedProduct.id);
+                closeProductModal();
+            };
+
+            document.getElementById('modal-product').classList.remove('hidden-element');
+            lucide.createIcons();
+        }
+
+        function closeProductModal() {
+            selectedProduct = null;
+            document.getElementById('modal-product').classList.add('hidden-element');
+        }
+
+        // --- LÓGICA DO CARRINHO ---
+        function addToCart(productId) {
+            const product = PRODUCTS.find(p => p.id === productId);
+            if(!product) return;
+
+            const existing = cart.find(item => item.id === product.id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            
+            updateCartUI();
+            showToast();
+        }
+
+        function updateQuantity(id, delta) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    removeFromCart(id);
+                } else {
+                    updateCartUI();
+                }
+            }
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            // Contadores
+            const count = cart.reduce((acc, item) => acc + item.qty, 0);
+            const badge = document.getElementById('cart-badge');
+            
+            if(count > 0) {
+                badge.textContent = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            // Rendereizar itens do carrinho
+            const container = document.getElementById('cart-items-container');
+            const footer = document.getElementById('cart-footer');
+            const totalElement = document.getElementById('cart-total');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-stone-300 space-y-4 pt-10">
+                        <i data-lucide="shopping-cart" class="w-16 h-16 opacity-50"></i>
+                        <p class="text-lg font-medium">Carrinho vazio.</p>
+                    </div>
+                `;
+                footer.classList.add('hidden-element');
+            } else {
+                container.innerHTML = cart.map(item => `
+                    <div class="flex gap-4 items-center bg-white border border-stone-100 p-3 rounded-xl shadow-sm">
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg" onerror="this.src='https://placehold.co/100x100?text=Img';"/>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-stone-800 text-sm leading-tight">${item.name}</h4>
+                            <div class="text-emerald-600 font-bold text-sm mt-1">${formatPrice(item.price)}</div>
+                            <div class="flex items-center gap-3 mt-2">
+                                <div class="flex items-center bg-stone-100 rounded-lg">
+                                    <button onclick="updateQuantity(${item.id}, -1)" class="p-1 text-stone-500"><i data-lucide="minus" class="w-3.5 h-3.5"></i></button>
+                                    <span class="w-6 text-center text-xs font-bold">${item.qty}</span>
+                                    <button onclick="updateQuantity(${item.id}, 1)" class="p-1 text-stone-500"><i data-lucide="plus" class="w-3.5 h-3.5"></i></button>
+                                </div>
+                                <button onclick="removeFromCart(${item.id})" class="text-[10px] uppercase font-bold text-red-400 hover:text-red-600 transition-colors">Remover</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+                totalElement.textContent = formatPrice(total);
+                footer.classList.remove('hidden-element');
+            }
+            lucide.createIcons();
+        }
+
+        function toggleCart(open) {
+            const modal = document.getElementById('modal-cart');
+            if(open) {
+                updateCartUI();
+                modal.classList.remove('hidden-element');
+            } else {
+                modal.classList.add('hidden-element');
+            }
+        }
+
+        // WhatsApp Checkout
+        function handleCheckout() {
+            if (cart.length === 0) return;
+            const total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            
+            let message = `Olá, vim do site e gostaria de fazer um pedido na *Dona Lene*:\n\n`;
+            cart.forEach(item => {
+                message += `- ${item.qty}x ${item.name} (${formatPrice(item.price)})\n`;
+            });
+            message += `\n*Total:* ${formatPrice(total)}\n\nComo funciona a entrega?`;
+
+            const whatsappNumber = "5575988615063"; 
+            window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        // --- SISTEMA DE TOAST ---
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-x-10', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-x-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-10', 'opacity-0', 'pointer-events-none');
+                toast.classList.remove('translate-x-0', 'opacity-100');
+            }, 2000);
+        }
+
+        // --- LÓGICA DO CHATBOT GEMINI ---
+        function toggleChat(forceOpen) {
+            isChatOpen = forceOpen !== undefined ? forceOpen : !isChatOpen;
+            const chatWindow = document.getElementById('chat-window');
+            const iconDefault = document.getElementById('chat-icon-default');
+            const iconClose = document.getElementById('chat-icon-close');
+
+            if(isChatOpen) {
+                chatWindow.classList.remove('hidden-element');
+                iconDefault.classList.add('hidden-element');
+                iconClose.classList.remove('hidden-element');
+                scrollToBottomChat();
+                document.getElementById('chat-input').focus();
+            } else {
+                chatWindow.classList.add('hidden-element');
+                iconDefault.classList.remove('hidden-element');
+                iconClose.classList.add('hidden-element');
+            }
+        }
+
+        function renderChatMessages() {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = chatMessages.map(msg => `
+                <div class="flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}">
+                    <div class="max-w-[85%] p-3 rounded-2xl text-sm ${msg.role === 'user' ? 'bg-emerald-600 text-white rounded-br-none' : 'bg-white border border-stone-200 text-stone-700 rounded-bl-none shadow-sm'}">
+                        ${msg.content}
+                    </div>
+                </div>
+            `).join('');
+            scrollToBottomChat();
+        }
+
+        function scrollToBottomChat() {
+            const container = document.getElementById('chat-messages');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function handleSendMessage() {
+            const inputEl = document.getElementById('chat-input');
+            const text = inputEl.value.trim();
+            if(!text || isTyping) return;
+
+            // User message
+            chatMessages.push({ role: 'user', content: text });
+            inputEl.value = '';
+            renderChatMessages();
+            
+            // UI States
+            isTyping = true;
+            document.getElementById('chat-typing').classList.remove('hidden-element');
+            document.getElementById('chat-send-btn').disabled = true;
+            scrollToBottomChat();
+
+            try {
+                const apiKey = ""; // API Key fornecida pelo ambiente
+                const systemPrompt = "Você é a assistente virtual da laticínios Dona Lene, de Feira de Santana (Bahia). Você ajuda os clientes a escolherem produtos artesanais como Manteiga da Terra, Queijo Coalho, Requeijão Caipira, etc. Seja muito simpática, prestativa, use um tom acolhedor e algumas expressões nordestinas educadas. Responda de forma concisa (1 a 3 frases no máximo).";
+                
+                // Formatação para Gemini
+                const contents = chatMessages.map(msg => ({
+                    role: msg.role === 'user' ? 'user' : 'model',
+                    parts: [{ text: msg.content }]
+                }));
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: contents,
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+
+                if (!response.ok) throw new Error('API Error');
+                
+                const data = await response.json();
+                const botText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Desculpe, não consegui entender.";
+                
+                chatMessages.push({ role: 'model', content: botText });
+            } catch (error) {
+                chatMessages.push({ role: 'model', content: "Oxe, tive um probleminha de conexão aqui. Pode tentar falar de novo?" });
+            } finally {
+                isTyping = false;
+                document.getElementById('chat-typing').classList.add('hidden-element');
+                document.getElementById('chat-send-btn').disabled = false;
+                renderChatMessages();
+            }
+        }
+    </script>
+</body>
+</html>
